@@ -35,10 +35,10 @@ class JokeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        jokeListViewModel.jokeListLiveData.observe(
+        jokeListViewModel.jokeListLiveData().observe(
             viewLifecycleOwner,
             Observer { str ->
-                Log.d(TAG, str)
+                Log.d(TAG, str[2].length.toString())
             }
         )
     }
