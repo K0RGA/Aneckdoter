@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -19,7 +20,8 @@ private const val TAG = "JokeListFragment"
 class JokeListFragment : Fragment() {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
-    private lateinit var jokeRecyclerView: RecyclerView
+    private lateinit var jokeTextView: TextView
+    private lateinit var likeButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,8 +30,12 @@ class JokeListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_joke_list, container, false)
 
-        jokeRecyclerView = view.findViewById(R.id.recycler_view)
-        jokeRecyclerView.layoutManager = LinearLayoutManager(context)
+        jokeTextView = view.findViewById(R.id.joke_text_view)
+        likeButton = view.findViewById(R.id.like_button)
+
+        likeButton.setOnClickListener {
+            jokeListViewModel.getNewJoke()
+        }
         return view
     }
 
@@ -38,6 +44,7 @@ class JokeListFragment : Fragment() {
         jokeListViewModel.jokeListLiveData.observe(
             viewLifecycleOwner,
             Observer { str ->
+                jokeTextView.text = str
                 Log.d(TAG, str)
             }
         )
