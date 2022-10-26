@@ -1,9 +1,9 @@
 package com.example.aneckdoter
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.aneckdoter.network.JokeFetcher
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -15,7 +15,7 @@ class JokeListViewModel : ViewModel() {
 
     fun getNewJoke() {
         MainScope().launch {
-            _jokeLiveData.value = JokeFetcher().fetchJokeByNumber((0..1142).random()).await()
+            _jokeLiveData.value = JokeFetcher().getRandomJoke().await()
         }
     }
 }

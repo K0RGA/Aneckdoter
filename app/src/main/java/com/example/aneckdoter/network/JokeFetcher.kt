@@ -1,8 +1,8 @@
-package com.example.aneckdoter
+package com.example.aneckdoter.network
 
-import android.util.Log
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.*
+import org.jsoup.Jsoup
 import retrofit2.*
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
@@ -20,21 +20,17 @@ class JokeFetcher {
         jokeApi = retrofit.create(JokeApi::class.java)
     }
 
-
-    suspend fun fetchJokeByNumber(numberOfJoke: Int): Deferred<String> {
+    fun getRandomJoke(): Deferred<String>{
         return CoroutineScope(Dispatchers.IO).async {
             try {
-                val response = jokeApi.getRandomJoke(numberOfJoke).body().toString().getJokeFromResponse()
-                response
+                val numberOfJoke = (0..1142).random()
+                val response = Jsoup.connect("https://baneks.ru/${numberOfJoke}").get()
+                val textOfJoke = response.select("p").text()
+                textOfJoke
             } catch (e: Exception){
                 "Default"
             }
         }
     }
 
-    fun String.getJokeFromResponse(): String {
-        return this
-            .substringAfter("""name="description" content="""")
-            .substringBefore("""">""")
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.aneckdoter
+package com.example.aneckdoter.network
 
 import retrofit2.Call
 import retrofit2.Response
