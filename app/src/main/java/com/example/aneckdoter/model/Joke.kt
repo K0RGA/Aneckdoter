@@ -1,7 +1,7 @@
 package com.example.aneckdoter.model
 
 data class Joke(
-    var joke: String,
-    val id:Int,
+    var text: String,
+    val number: Int,
     var isLiked: Boolean = false
-    )
+)

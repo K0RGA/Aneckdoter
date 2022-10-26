@@ -1,5 +1,6 @@
 package com.example.aneckdoter.network
 
+import com.example.aneckdoter.model.Joke
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
@@ -20,15 +21,34 @@ class JokeFetcher {
         jokeApi = retrofit.create(JokeApi::class.java)
     }
 
-    fun getRandomJoke(): Deferred<String>{
+
+    suspend fun fetchJokeByNumber(numberOfJoke: Int): Deferred<Joke> {
+        return CoroutineScope(Dispatchers.IO).async {
+            try {
+                val textOfJoke =
+                    jokeApi.getRandomJoke(numberOfJoke).body().toString().getJokeFromResponse()
+                Joke(textOfJoke, numberOfJoke)
+            } catch (e: Exception) {
+                Joke("Default", 0)
+            }
+        }
+    }
+
+    private fun String.getJokeFromResponse(): String {
+        return this
+            .substringAfter("""name="description" content="""")
+            .substringBefore("""">""")
+    }
+
+    fun getBestJokesList(): Deferred<List<Int>> {
         return CoroutineScope(Dispatchers.IO).async {
             try {
                 val numberOfJoke = (0..1142).random()
                 val response = Jsoup.connect("https://baneks.ru/${numberOfJoke}").get()
-                val textOfJoke = response.select("p").text()
-                textOfJoke
-            } catch (e: Exception){
-                "Default"
+                val listOfBestJoke = response.select("href").text().map { it.code }
+                listOfBestJoke
+            } catch (e: Exception) {
+                MutableList(0) { 0 }
             }
         }
     }
