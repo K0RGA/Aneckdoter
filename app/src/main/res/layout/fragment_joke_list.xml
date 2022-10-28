@@ -5,16 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/refresh_button"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_margin="16dp"
-        android:elevation="80dp"
-        android:text="Ref"
-        app:layout_constraintBottom_toBottomOf="@+id/joke_recycler_view"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/joke_recycler_view"
         android:layout_width="match_parent"
