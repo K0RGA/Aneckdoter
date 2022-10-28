@@ -25,7 +25,7 @@ class JokeListFragment : Fragment() {
     private lateinit var refreshButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var clipboard: ClipboardManager
-    private var adapter: JokeAdapter? = JokeAdapter(emptyList())
+    private var adapter: JokeAdapter? = JokeAdapter(mutableListOf())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +63,8 @@ class JokeListFragment : Fragment() {
         )
     }
 
-    private fun updateUI(jokes: List<Joke>) {
-        adapter = JokeAdapter(jokes)
-        recyclerView.adapter = adapter
+    private fun updateUI(jokes: MutableList<Joke>) {
+        adapter?.updateAdapter(jokes)
     }
 
     private inner class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnLongClickListener {
@@ -93,7 +92,7 @@ class JokeListFragment : Fragment() {
         }
     }
 
-    private inner class JokeAdapter(val jokes: List<Joke>):
+    private inner class JokeAdapter(var jokes: MutableList<Joke>):
             RecyclerView.Adapter<JokeHolder>(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeHolder {
@@ -107,6 +106,11 @@ class JokeListFragment : Fragment() {
         }
 
         override fun getItemCount(): Int = jokes.size
+
+        fun updateAdapter(items: MutableList<Joke>){
+            jokes.addAll(items)
+            notifyDataSetChanged()
+        }
     }
 
     companion object {

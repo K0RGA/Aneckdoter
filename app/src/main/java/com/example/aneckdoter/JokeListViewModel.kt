@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "JokeListViewModel"
 
 class JokeListViewModel : ViewModel() {
-    private val _jokeLiveData: MutableLiveData<List<Joke>> = MutableLiveData()
-    val jokeLiveData: LiveData<List<Joke>> = _jokeLiveData
+    private val _jokeLiveData: MutableLiveData<MutableList<Joke>> = MutableLiveData()
+    val jokeLiveData: LiveData<MutableList<Joke>> = _jokeLiveData
 
     init {
         getListJoke()
@@ -20,8 +20,8 @@ class JokeListViewModel : ViewModel() {
 
     fun getListJoke() {
         MainScope().launch {
-            val listOfRandomNumber = List(10){(0..1142).random()}
             var listOfRandomJoke: MutableList<Joke> = mutableListOf()
+            val listOfRandomNumber = List(10){(0..1142).random()}
             for (randomNumber in listOfRandomNumber){
                 listOfRandomJoke.add(JokeFetcher().fetchJokeByNumber(randomNumber).await())
             }
