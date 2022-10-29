@@ -23,6 +23,5 @@
     <ImageButton
         android:layout_width="60dp"
         android:layout_height="30dp"
-        android:layout_gravity="end"
-        android:src="@drawable/love" />
+        android:layout_gravity="end" />
 </LinearLayout>

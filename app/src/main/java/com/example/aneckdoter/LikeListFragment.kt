@@ -16,11 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.model.Joke
 
-private const val TAG = "JokeListFragment"
-
-class JokeListFragment : Fragment() {
-
-    private val jokeListViewModel: JokeListViewModel by viewModels()
+class LikeListFragment : Fragment() {
+    private val likeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var clipboard: ClipboardManager
     private var adapter: JokeAdapter? = JokeAdapter(mutableListOf())
@@ -38,9 +35,9 @@ class JokeListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_joke_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_like_list, container, false)
 
-        recyclerView = view.findViewById(R.id.joke_recycler_view)
+        recyclerView = view.findViewById(R.id.like_list_recycler_view)
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
@@ -51,7 +48,7 @@ class JokeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        jokeListViewModel.jokeLiveData.observe(
+        likeListViewModel.jokeLiveData.observe(
             viewLifecycleOwner,
             Observer { jokes ->
                 jokes?.let {
@@ -60,7 +57,7 @@ class JokeListFragment : Fragment() {
             }
         )
 
-        jokeListViewModel.isLoadingLiveData.observe(
+        likeListViewModel.isLoadingLiveData.observe(
             viewLifecycleOwner,
             Observer { isLoading ->
                 this.isLoading = isLoading
@@ -125,7 +122,7 @@ class JokeListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading){
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.jokes.size - 3) {
-                        jokeListViewModel.addNewJokes()
+                        likeListViewModel.addNewJokes()
                     }
                 }
 
@@ -136,5 +133,6 @@ class JokeListFragment : Fragment() {
     companion object {
         fun newInstance() = JokeListFragment()
     }
+
 
 }
