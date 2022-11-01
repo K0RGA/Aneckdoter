@@ -14,12 +14,7 @@ class LikeListViewModel: ViewModel() {
     val repository = JokeRepository.get()
     val jokeLiveData: LiveData<List<Joke>> = repository.getLikeJokes()
 
-
-    fun likeJoke(){
-
-    }
-
-    fun dislikeJoke(){
-
+    fun dislikeJoke(joke: Joke){
+        repository.dislikeJoke(joke)
     }
 }

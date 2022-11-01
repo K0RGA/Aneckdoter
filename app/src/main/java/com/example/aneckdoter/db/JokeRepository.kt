@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.aneckdoter.model.Joke
+import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "joke-database"
 
@@ -15,8 +16,21 @@ class JokeRepository private constructor(context: Context){
         DATABASE_NAME).build()
 
     private val jokeDao = database.jokeDao()
+    private val executor = Executors.newSingleThreadExecutor()
 
     fun getLikeJokes (): LiveData<List<Joke>> = jokeDao.getLikeJoke()
+
+    fun likeJoke(joke: Joke){
+        executor.execute {
+            jokeDao.likeJoke(joke)
+        }
+    }
+
+    fun dislikeJoke(joke: Joke){
+        executor.execute {
+            jokeDao.dislikeJoke(joke)
+        }
+    }
 
     companion object {
         private var INSTANCE: JokeRepository? = null

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -77,13 +78,15 @@ class JokeListFragment : Fragment() {
     }
 
     private inner class JokeHolder(view: View) : RecyclerView.ViewHolder(view),
-        View.OnLongClickListener {
+        View.OnLongClickListener, View.OnClickListener {
 
         private val jokeText: TextView = view.findViewById(R.id.joke_text)
         private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
+        private val likeButton: ImageButton = view.findViewById(R.id.like_button)
 
         init {
             jokeText.setOnLongClickListener(this)
+            likeButton.setOnClickListener(this)
         }
 
         private lateinit var joke: Joke
@@ -99,6 +102,12 @@ class JokeListFragment : Fragment() {
             clipboard.setPrimaryClip(clip)
             Toast.makeText(requireContext(), "Text copied", Toast.LENGTH_SHORT).show()
             return true
+        }
+
+        override fun onClick(p0: View?) {
+            val text = jokeText.text.toString()
+            val number = jokeNumber.text.toString().toInt()
+            jokeListViewModel.likeJoke(Joke(text, number, isLiked = true))
         }
     }
 
@@ -127,7 +136,7 @@ class JokeListFragment : Fragment() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!isLoading){
+                if (!isLoading) {
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.jokes.size - 3) {
                         jokeListViewModel.addNewJokes()
                     }

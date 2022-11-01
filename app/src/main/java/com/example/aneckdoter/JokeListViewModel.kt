@@ -3,6 +3,7 @@ package com.example.aneckdoter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 import com.example.aneckdoter.network.JokeFetcher
 import kotlinx.coroutines.MainScope
@@ -15,6 +16,7 @@ class JokeListViewModel : ViewModel() {
     val jokeLiveData: LiveData<MutableList<Joke>> = _jokeLiveData
     private val _isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val isLoadingLiveData: LiveData<Boolean> = _isLoadingLiveData
+    val repository: JokeRepository = JokeRepository.get()
 
 
     init {
@@ -33,4 +35,6 @@ class JokeListViewModel : ViewModel() {
             _isLoadingLiveData.value = false
         }
     }
+
+    fun likeJoke(joke: Joke) = repository.likeJoke(joke)
 }

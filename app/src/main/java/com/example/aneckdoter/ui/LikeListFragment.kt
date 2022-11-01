@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.LikeListViewModel
 import com.example.aneckdoter.R
+import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 
 private const val TAG = "Current fragment"
@@ -28,6 +31,7 @@ class LikeListFragment : Fragment() {
     private var adapter: JokeAdapter? = JokeAdapter(mutableListOf())
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
+    val repository = JokeRepository.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +51,6 @@ class LikeListFragment : Fragment() {
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-
-        addScrollerListener()
         return view
     }
 
@@ -62,27 +64,22 @@ class LikeListFragment : Fragment() {
                 }
             }
         )
-
-        likeListViewModel.isLoadingLiveData.observe(
-            viewLifecycleOwner,
-            Observer { isLoading ->
-                this.isLoading = isLoading
-            }
-        )
     }
 
-    private fun updateUI(jokes: MutableList<Joke>) {
+    private fun updateUI(jokes: List<Joke>) {
         adapter?.updateAdapter(jokes)
     }
 
     private inner class JokeHolder(view: View) : RecyclerView.ViewHolder(view),
-        View.OnLongClickListener {
+        View.OnLongClickListener, View.OnClickListener {
 
         private val jokeText: TextView = view.findViewById(R.id.joke_text)
         private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
+        private val likeButton: ImageButton = view.findViewById(R.id.like_button)
 
         init {
             jokeText.setOnLongClickListener(this)
+            likeButton.setOnClickListener(this)
         }
 
         private lateinit var joke: Joke
@@ -98,6 +95,12 @@ class LikeListFragment : Fragment() {
             clipboard.setPrimaryClip(clip)
             Toast.makeText(requireContext(), "Text copied", Toast.LENGTH_SHORT).show()
             return true
+        }
+
+        override fun onClick(p0: View?) {
+            val text = jokeText.text.toString()
+            val number = jokeNumber.text.toString().toInt()
+            repository.dislikeJoke(Joke(text,number))
         }
     }
 
@@ -116,24 +119,10 @@ class LikeListFragment : Fragment() {
 
         override fun getItemCount(): Int = jokes.size
 
-        fun updateAdapter(items: MutableList<Joke>) {
+        fun updateAdapter(items: List<Joke>) {
             jokes.addAll(items)
             notifyDataSetChanged()
         }
-    }
-
-    private fun addScrollerListener() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (!isLoading){
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.jokes.size - 3) {
-                        //likeListViewModel.addNewJokes()
-                    }
-                }
-
-            }
-        })
     }
 
     companion object {
