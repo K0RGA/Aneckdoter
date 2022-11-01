@@ -1,9 +1,10 @@
-package com.example.aneckdoter
+package com.example.aneckdoter.ui
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aneckdoter.LikeListViewModel
+import com.example.aneckdoter.R
 import com.example.aneckdoter.model.Joke
 
+private const val TAG = "Current fragment"
+
 class LikeListFragment : Fragment() {
-    private val likeListViewModel: JokeListViewModel by viewModels()
+    private val likeListViewModel: LikeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var clipboard: ClipboardManager
     private var adapter: JokeAdapter? = JokeAdapter(mutableListOf())
@@ -27,6 +32,7 @@ class LikeListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        Log.d(TAG, "Like list fragment")
 
     }
 
@@ -122,7 +128,7 @@ class LikeListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading){
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.jokes.size - 3) {
-                        likeListViewModel.addNewJokes()
+                        //likeListViewModel.addNewJokes()
                     }
                 }
 
@@ -131,7 +137,7 @@ class LikeListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = JokeListFragment()
+        fun newInstance() = LikeListFragment()
     }
 
 

@@ -1,9 +1,10 @@
-package com.example.aneckdoter
+package com.example.aneckdoter.ui
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aneckdoter.JokeListViewModel
+import com.example.aneckdoter.R
 import com.example.aneckdoter.model.Joke
 
-private const val TAG = "JokeListFragment"
+private const val TAG = "Current fragment"
 
 class JokeListFragment : Fragment() {
 
@@ -30,6 +33,7 @@ class JokeListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        Log.d(TAG, "Joke list fragment")
 
     }
 

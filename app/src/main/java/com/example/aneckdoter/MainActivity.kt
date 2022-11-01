@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.aneckdoter.ui.JokeListFragment
+import com.example.aneckdoter.ui.LikeListFragment
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 
@@ -23,6 +25,17 @@ class MainActivity : AppCompatActivity() {
             .addDrawerItems(
                 PrimaryDrawerItem().withName(R.string.drawer_item_random_joke),
                 PrimaryDrawerItem().withName(R.string.drawer_item_like))
+            .withOnDrawerItemClickListener { _, _, position, _, _ ->
+                when (position){
+                    1 -> supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, JokeListFragment.newInstance())
+                            .commit()
+                    2 -> supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, LikeListFragment.newInstance())
+                            .addToBackStack("")
+                            .commit()
+                }
+            }
             .build()
 
         val isFragmentContainerEmpty = (savedInstanceState == null)
