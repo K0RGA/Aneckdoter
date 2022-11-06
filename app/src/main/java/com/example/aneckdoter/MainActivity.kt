@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 when (position){
                     1 -> supportFragmentManager.commit {
                         setReorderingAllowed(true)
-                        replace(fragmentContainer,JokeListFragment.newInstance())
+                        replace(fragmentContainer,JokeListFragment.get())
                         addToBackStack("joke_list")
                     }
                     2 -> supportFragmentManager.commit {
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         if (isFragmentContainerEmpty){
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add(fragmentContainer, JokeListFragment.newInstance())
+                add(fragmentContainer, JokeListFragment.get())
                 addToBackStack("joke_list")
             }
         }

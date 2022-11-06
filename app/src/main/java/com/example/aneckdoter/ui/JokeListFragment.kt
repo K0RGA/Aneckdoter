@@ -3,6 +3,7 @@ package com.example.aneckdoter.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -19,11 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.JokeListViewModel
 import com.example.aneckdoter.R
+import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 
 private const val TAG = "Current fragment"
 
-class JokeListFragment : Fragment() {
+class JokeListFragment : Fragment()  {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
@@ -96,6 +98,7 @@ class JokeListFragment : Fragment() {
             this.joke = joke
             jokeText.text = joke.text
             jokeNumber.text = joke.number.toString()
+            if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
         }
 
         override fun onLongClick(p0: View?): Boolean {
@@ -148,7 +151,17 @@ class JokeListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = JokeListFragment()
+        private var INSTANCE: JokeListFragment? = null
+
+        fun initialize(context: Context) {
+            if (INSTANCE == null) {
+                INSTANCE = JokeListFragment()
+            }
+        }
+
+        fun get(): JokeListFragment {
+            return INSTANCE ?: throw IllegalStateException("JokeRepository must be initialized")
+        }
     }
 
 }
