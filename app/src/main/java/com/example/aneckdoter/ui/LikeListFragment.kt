@@ -120,7 +120,7 @@ class LikeListFragment : Fragment() {
         override fun getItemCount(): Int = jokes.size
 
         fun updateAdapter(items: List<Joke>) {
-            jokes.addAll(items)
+            jokes = items as MutableList<Joke>
             notifyDataSetChanged()
         }
     }

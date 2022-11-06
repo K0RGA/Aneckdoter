@@ -2,8 +2,12 @@ package com.example.aneckdoter
 
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.commit
 import com.example.aneckdoter.ui.JokeListFragment
 import com.example.aneckdoter.ui.LikeListFragment
 import com.mikepenz.materialdrawer.Drawer
@@ -17,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        val fragmentContainer = R.id.fragmentContainer
         Drawer()
             .withActivity(this)
             .withToolbar(toolbar)
@@ -27,22 +32,27 @@ class MainActivity : AppCompatActivity() {
                 PrimaryDrawerItem().withName(R.string.drawer_item_like))
             .withOnDrawerItemClickListener { _, _, position, _, _ ->
                 when (position){
-                    1 -> supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainer, JokeListFragment.newInstance())
-                            .commit()
-                    2 -> supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainer, LikeListFragment.newInstance())
-                            .addToBackStack("")
-                            .commit()
+                    1 -> supportFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace(fragmentContainer,JokeListFragment.newInstance())
+                        addToBackStack("joke_list")
+                    }
+                    2 -> supportFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace(fragmentContainer, LikeListFragment.newInstance())
+                        addToBackStack("like_list")
+                    }
                 }
             }
             .build()
 
         val isFragmentContainerEmpty = (savedInstanceState == null)
         if (isFragmentContainerEmpty){
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, JokeListFragment.newInstance())
-                .commit()
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add(fragmentContainer, JokeListFragment.newInstance())
+                addToBackStack("joke_list")
+            }
         }
     }
 

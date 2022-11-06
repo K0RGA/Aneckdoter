@@ -29,7 +29,8 @@ class JokeListViewModel : ViewModel() {
             var listOfRandomJoke: MutableList<Joke> = mutableListOf()
             val listOfRandomNumber = List(7){(0..1142).random()}
             for (randomNumber in listOfRandomNumber){
-                listOfRandomJoke.add(JokeFetcher().fetchJokeByNumber(randomNumber).await())
+                val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
+                listOfRandomJoke.add(newJoke)
             }
             _jokeLiveData.value = listOfRandomJoke
             _isLoadingLiveData.value = false
