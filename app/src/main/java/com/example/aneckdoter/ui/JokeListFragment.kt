@@ -11,13 +11,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aneckdoter.JokeAdapter
+import com.example.aneckdoter.JokeDiffCallback
 import com.example.aneckdoter.JokeListViewModel
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
@@ -25,21 +29,13 @@ import com.example.aneckdoter.model.Joke
 
 private const val TAG = "Current fragment"
 
-class JokeListFragment : Fragment()  {
+class JokeListFragment : Fragment() {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var clipboard: ClipboardManager
-    private var adapter: JokeAdapter? = JokeAdapter(mutableListOf())
+    private var adapter: JokeAdapter = JokeAdapter()
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        Log.d(TAG, "Joke list fragment")
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,92 +43,30 @@ class JokeListFragment : Fragment()  {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_joke_list, container, false)
+        createRecyclerView(view)
+        return view
+    }
 
+    private fun createRecyclerView(view: View) {
         recyclerView = view.findViewById(R.id.joke_recycler_view)
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-
         addScrollerListener()
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         jokeListViewModel.jokeLiveData.observe(
-            viewLifecycleOwner,
-            Observer { jokes ->
-                jokes?.let {
-                    updateUI(jokes)
-                }
-            }
-        )
+            viewLifecycleOwner
+        ) { jokes ->
+            adapter.submitList(jokes)
+        }
 
         jokeListViewModel.isLoadingLiveData.observe(
-            viewLifecycleOwner,
-            Observer { isLoading ->
-                this.isLoading = isLoading
-            }
-        )
-    }
-
-    private fun updateUI(jokes: MutableList<Joke>) {
-        adapter?.updateAdapter(jokes)
-    }
-
-    private inner class JokeHolder(view: View) : RecyclerView.ViewHolder(view),
-        View.OnLongClickListener, View.OnClickListener {
-
-        private val jokeText: TextView = view.findViewById(R.id.joke_text)
-        private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
-        private val likeButton: ImageButton = view.findViewById(R.id.like_button)
-
-        init {
-            jokeText.setOnLongClickListener(this)
-            likeButton.setOnClickListener(this)
-        }
-
-        private lateinit var joke: Joke
-
-        fun bind(joke: Joke) {
-            this.joke = joke
-            jokeText.text = joke.text
-            jokeNumber.text = joke.number.toString()
-            if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
-        }
-
-        override fun onLongClick(p0: View?): Boolean {
-            val clip = ClipData.newPlainText("Text of joke", jokeText.text)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "Text copied", Toast.LENGTH_SHORT).show()
-            return true
-        }
-
-        override fun onClick(p0: View?) {
-            val text = jokeText.text.toString()
-            val number = jokeNumber.text.toString().toInt()
-            jokeListViewModel.likeJoke(Joke(text, number, isLiked = true))
-        }
-    }
-
-    private inner class JokeAdapter(var jokes: MutableList<Joke>) :
-        RecyclerView.Adapter<JokeHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeHolder {
-            val view = layoutInflater.inflate(R.layout.joke_list_item, parent, false)
-            return JokeHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: JokeHolder, position: Int) {
-            val joke = jokes[position]
-            holder.bind(joke)
-        }
-
-        override fun getItemCount(): Int = jokes.size
-
-        fun updateAdapter(items: MutableList<Joke>) {
-            jokes.addAll(items)
-            notifyDataSetChanged()
+            viewLifecycleOwner
+        ) { isLoading ->
+            this.isLoading = isLoading
         }
     }
 
@@ -141,11 +75,10 @@ class JokeListFragment : Fragment()  {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading) {
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.jokes.size - 3) {
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.currentList.size - 3) {
                         jokeListViewModel.addNewJokes()
                     }
                 }
-
             }
         })
     }
@@ -153,7 +86,7 @@ class JokeListFragment : Fragment()  {
     companion object {
         private var INSTANCE: JokeListFragment? = null
 
-        fun initialize(context: Context) {
+        fun initialize() {
             if (INSTANCE == null) {
                 INSTANCE = JokeListFragment()
             }

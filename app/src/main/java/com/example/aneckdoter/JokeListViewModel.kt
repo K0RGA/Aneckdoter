@@ -18,8 +18,9 @@ class JokeListViewModel : ViewModel() {
     private val _isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val isLoadingLiveData: LiveData<Boolean> = _isLoadingLiveData
 
-    val repository: JokeRepository = JokeRepository.get()
+    var currentJokeList = mutableListOf<Joke>()
 
+    private val repository: JokeRepository = JokeRepository.get()
 
     init {
         addNewJokes()
@@ -28,18 +29,15 @@ class JokeListViewModel : ViewModel() {
     fun addNewJokes(){
         MainScope().launch {
             _isLoadingLiveData.value = true
-            var listOfRandomJoke: MutableList<Joke> = mutableListOf()
             val listOfRandomNumber = List(7){(0..1142).random()}
             val likeListLiveData = repository.getListLikeJoke().await()
             for (randomNumber in listOfRandomNumber){
                 val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
                 if (newJoke.number in likeListLiveData) newJoke.isLiked = true
-                listOfRandomJoke.add(newJoke)
+                currentJokeList.add(newJoke)
             }
-            _jokeLiveData.value = listOfRandomJoke
+            _jokeLiveData.value = currentJokeList
             _isLoadingLiveData.value = false
         }
     }
-
-    fun likeJoke(joke: Joke) = repository.likeJoke(joke)
 }

@@ -8,6 +8,6 @@ class JokeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         JokeRepository.initialize(this)
-        JokeListFragment.initialize(this)
+        JokeListFragment.initialize()
     }
 }
