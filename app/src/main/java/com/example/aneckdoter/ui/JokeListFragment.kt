@@ -59,7 +59,7 @@ class JokeListFragment : Fragment() {
             if (isLoading) {
                 adapter.addLoadingView()
             } else {
-                //adapter.deleteLoadingView()
+                adapter.deleteLoadingView()
             }
         }
     }

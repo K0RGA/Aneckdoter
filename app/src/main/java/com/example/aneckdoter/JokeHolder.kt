@@ -46,7 +46,7 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         jokeText.text = joke.text
         jokeNumber.text = joke.number.toString()
         joke.isLiked = joke.number in listOfLike
-        if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
+        //if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
     }
 
     override fun onLongClick(p0: View?): Boolean {
@@ -60,6 +60,5 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         val text = jokeText.text.toString()
         val number = jokeNumber.text.toString().toInt()
         repository.likeJoke(Joke(text, number, isLiked = true))
-        likeButton.setBackgroundColor(Color.BLUE)
     }
 }

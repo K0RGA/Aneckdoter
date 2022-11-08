@@ -36,8 +36,8 @@ class JokeListViewModel : ViewModel() {
                 if (newJoke.number in likeListLiveData) newJoke.isLiked = true
                 currentJokeList.add(newJoke)
             }
-            _jokeLiveData.value = currentJokeList
             _isLoadingLiveData.value = false
+            _jokeLiveData.value = currentJokeList
         }
     }
 

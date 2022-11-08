@@ -43,12 +43,12 @@ class JokeAdapter() :
         notifyItemInserted(currentList.lastIndex)
     }
 
-//    fun deleteLoadingView() {
-//        if (currentList.size != 0) {
-//            submitList(ArrayList(currentList - currentList[currentList.lastIndex]))
-//            notifyItemRemoved(currentList.size)
-//        }
-//    }
+    fun deleteLoadingView() {
+        if (currentList.size != 0) {
+            submitList(ArrayList(currentList - currentList.last()))
+            notifyItemRemoved(currentList.size)
+        }
+    }
 
     override fun getItemViewType(position: Int): Int {
         return if (getItem(position) == null) {

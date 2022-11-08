@@ -22,7 +22,9 @@
 
     <ImageButton
         android:id="@+id/like_button"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:layout_gravity="end" />
+        android:layout_width="57dp"
+        android:layout_height="47dp"
+        android:layout_gravity="end"
+        android:background="@android:color/transparent"
+        android:src="@drawable/like_button" />
 </LinearLayout>
