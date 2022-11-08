@@ -26,6 +26,7 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
 
     private var listOfLike = mutableListOf<Int>()
 
+
     private val jokeText: TextView = view.findViewById(R.id.joke_text)
     private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
     private val likeButton: ImageButton = view.findViewById(R.id.like_button)

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +14,7 @@ import com.example.aneckdoter.JokeListViewModel
 import com.example.aneckdoter.R
 
 private const val TAG = "Current fragment"
-private const val ELEMENTS_BEFORE_LOADING = 3
+private const val LOAD_THRESHOLD = 3
 
 class JokeListFragment : Fragment() {
 
@@ -21,6 +22,7 @@ class JokeListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var adapter: JokeAdapter = JokeAdapter()
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var progressBar: ProgressBar
     private var isLoading = false
 
     override fun onCreateView(
@@ -29,6 +31,7 @@ class JokeListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_joke_list, container, false)
+        progressBar = view.findViewById(R.id.progress_bar)
         createRecyclerView(view)
         return view
     }
@@ -46,14 +49,18 @@ class JokeListFragment : Fragment() {
         jokeListViewModel.jokeLiveData.observe(
             viewLifecycleOwner
         ) { jokes ->
-            adapter.submitList(jokes)
-            adapter.notifyItemRangeInserted(adapter.currentList.size, JokeListViewModel.BUFFER_SIZE)
+            adapter.submitList(ArrayList(jokes))
         }
 
         jokeListViewModel.isLoadingLiveData.observe(
             viewLifecycleOwner
         ) { isLoading ->
             this.isLoading = isLoading
+            if (isLoading) {
+                adapter.addLoadingView()
+            } else {
+                //adapter.deleteLoadingView()
+            }
         }
     }
 
@@ -62,8 +69,9 @@ class JokeListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading) {
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() ==
-                        adapter.currentList.size - ELEMENTS_BEFORE_LOADING) {
+                    if (layoutManager.findLastVisibleItemPosition() ==
+                        adapter.currentList.size - LOAD_THRESHOLD
+                    ) {
                         jokeListViewModel.addNewJokes()
                     }
                 }
