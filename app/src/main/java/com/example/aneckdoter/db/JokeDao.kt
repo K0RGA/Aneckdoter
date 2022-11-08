@@ -10,7 +10,7 @@ interface JokeDao {
     fun getLikeJoke(): LiveData<List<Joke>>
 
     @Query("select number from joke")
-    fun getNumbersOfLikeList() : List<Int>
+    fun getNumbersOfLikeList() : MutableList<Int>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun likeJoke(joke: Joke)

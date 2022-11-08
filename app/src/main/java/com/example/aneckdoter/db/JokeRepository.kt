@@ -37,13 +37,13 @@ class JokeRepository private constructor(context: Context) {
         }
     }
 
-    fun getListLikeJoke(): Deferred<List<Int>> {
+    fun getListLikeJoke(): Deferred<MutableList<Int>> {
         return CoroutineScope(Dispatchers.IO).async {
             try {
                 val list = jokeDao.getNumbersOfLikeList()
                 list
             } catch (e: Exception) {
-                mutableListOf<Int>()
+                mutableListOf()
             }
         }
     }

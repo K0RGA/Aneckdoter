@@ -29,7 +29,7 @@ class JokeListViewModel : ViewModel() {
     fun addNewJokes(){
         MainScope().launch {
             _isLoadingLiveData.value = true
-            val listOfRandomNumber = List(7){(0..1142).random()}
+            val listOfRandomNumber = List(BUFFER_SIZE){(0..1142).random()}
             val likeListLiveData = repository.getListLikeJoke().await()
             for (randomNumber in listOfRandomNumber){
                 val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
@@ -39,5 +39,9 @@ class JokeListViewModel : ViewModel() {
             _jokeLiveData.value = currentJokeList
             _isLoadingLiveData.value = false
         }
+    }
+
+    companion object {
+        const val BUFFER_SIZE = 7
     }
 }

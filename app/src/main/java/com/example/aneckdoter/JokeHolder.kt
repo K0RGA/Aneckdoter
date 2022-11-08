@@ -11,15 +11,20 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener,
     View.OnLongClickListener {
 
     val context = view.context
+
     private val repository = JokeRepository.get()
 
     private var clipboard: ClipboardManager =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    private var listOfLike = mutableListOf<Int>()
 
     private val jokeText: TextView = view.findViewById(R.id.joke_text)
     private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
@@ -28,6 +33,9 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
     init {
         jokeText.setOnLongClickListener(this)
         likeButton.setOnClickListener(this)
+        MainScope().launch {
+            listOfLike = repository.getListLikeJoke().await()
+        }
     }
 
     private lateinit var joke: Joke
@@ -36,6 +44,7 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         this.joke = joke
         jokeText.text = joke.text
         jokeNumber.text = joke.number.toString()
+        joke.isLiked = joke.number in listOfLike
         if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
     }
 
@@ -50,5 +59,6 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         val text = jokeText.text.toString()
         val number = jokeNumber.text.toString().toInt()
         repository.likeJoke(Joke(text, number, isLiked = true))
+        likeButton.setBackgroundColor(Color.BLUE)
     }
 }

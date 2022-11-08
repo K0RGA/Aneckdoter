@@ -1,33 +1,19 @@
 package com.example.aneckdoter.ui
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.JokeAdapter
-import com.example.aneckdoter.JokeDiffCallback
 import com.example.aneckdoter.JokeListViewModel
 import com.example.aneckdoter.R
-import com.example.aneckdoter.db.JokeRepository
-import com.example.aneckdoter.model.Joke
 
 private const val TAG = "Current fragment"
+private const val ELEMENTS_BEFORE_LOADING = 3
 
 class JokeListFragment : Fragment() {
 
@@ -61,6 +47,7 @@ class JokeListFragment : Fragment() {
             viewLifecycleOwner
         ) { jokes ->
             adapter.submitList(jokes)
+            adapter.notifyItemRangeInserted(adapter.currentList.size, JokeListViewModel.BUFFER_SIZE)
         }
 
         jokeListViewModel.isLoadingLiveData.observe(
@@ -75,7 +62,8 @@ class JokeListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading) {
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.currentList.size - 3) {
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() ==
+                        adapter.currentList.size - ELEMENTS_BEFORE_LOADING) {
                         jokeListViewModel.addNewJokes()
                     }
                 }
