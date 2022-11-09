@@ -1,5 +1,6 @@
 package com.example.aneckdoter
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import com.example.aneckdoter.ui.JokeListFragment
 import com.example.aneckdoter.ui.LikeListFragment
+import com.mikepenz.iconics.typeface.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 
@@ -28,13 +30,16 @@ class MainActivity : AppCompatActivity() {
             .withActionBarDrawerToggle(true)
             .withHeader(R.layout.drawer_header)
             .addDrawerItems(
-                PrimaryDrawerItem().withName(R.string.drawer_item_random_joke),
-                PrimaryDrawerItem().withName(R.string.drawer_item_like))
+                PrimaryDrawerItem().withName(R.string.drawer_item_random_joke)
+                    .withIcon(FontAwesome.Icon.faw_random),
+                PrimaryDrawerItem().withName(R.string.drawer_item_like)
+                    .withIcon(FontAwesome.Icon.faw_heart_o)
+            )
             .withOnDrawerItemClickListener { _, _, position, _, _ ->
-                when (position){
+                when (position) {
                     1 -> supportFragmentManager.commit {
                         setReorderingAllowed(true)
-                        replace(fragmentContainer,JokeListFragment.get())
+                        replace(fragmentContainer, JokeListFragment.get())
                         addToBackStack("joke_list")
                     }
                     2 -> supportFragmentManager.commit {
@@ -47,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val isFragmentContainerEmpty = (savedInstanceState == null)
-        if (isFragmentContainerEmpty){
+        if (isFragmentContainerEmpty) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 add(fragmentContainer, JokeListFragment.get())
