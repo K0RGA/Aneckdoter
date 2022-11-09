@@ -16,7 +16,7 @@ import com.example.aneckdoter.model.Joke
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener,
+class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHolder(view),
     View.OnLongClickListener {
 
     val context = view.context
@@ -32,7 +32,9 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
 
     init {
         jokeText.setOnLongClickListener(this)
-        likeButton.setOnClickListener(this)
+        likeButton.setOnClickListener {
+            onItemClicked(bindingAdapterPosition)
+        }
     }
 
     private lateinit var joke: Joke
@@ -51,14 +53,14 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         return true
     }
 
-    override fun onClick(p0: View?) {
-        val text = jokeText.text.toString()
-        val number = jokeNumber.text.toString().toInt()
-        val joke = Joke(text, number, isLiked = true)
-        if (likeButton.isChecked){
-            repository.likeJoke(joke)
-        } else {
-            repository.dislikeJoke(joke)
-        }
-    }
+//    override fun onClick(p0: View?) {
+//        val text = jokeText.text.toString()
+//        val number = jokeNumber.text.toString().toInt()
+//        val joke = Joke(text, number, isLiked = true)
+//        if (likeButton.isChecked){
+//            repository.likeJoke(joke)
+//        } else {
+//            repository.dislikeJoke(joke)
+//        }
+//    }
 }

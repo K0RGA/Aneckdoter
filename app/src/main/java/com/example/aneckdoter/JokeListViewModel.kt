@@ -35,7 +35,6 @@ class JokeListViewModel : ViewModel() {
                 val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
                 val jokeFromBD = repository.isJokeInDB(newJoke.number).await()?: Joke("",0)
                 if (newJoke.number == jokeFromBD.number) newJoke.isLiked = true
-                Log.d(TAG, jokeFromBD.toString())
                 currentJokeList.add(newJoke)
             }
             _isLoadingLiveData.value = false

@@ -1,6 +1,7 @@
 package com.example.aneckdoter.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +13,35 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.JokeAdapter
 import com.example.aneckdoter.JokeListViewModel
 import com.example.aneckdoter.R
+import com.example.aneckdoter.db.JokeRepository
+import com.example.aneckdoter.model.Joke
 
-private const val TAG = "Current fragment"
+private const val TAG = "JokeList"
 private const val LOAD_THRESHOLD = 3
 
 class JokeListFragment : Fragment() {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
-    private var adapter: JokeAdapter = JokeAdapter()
+    private val repository = JokeRepository.get()
+    private var adapter: JokeAdapter = JokeAdapter(){ joke, likeBtn ->
+        val newJoke = Joke(joke.text, joke.number, isLiked = true)
+        repository.likeJoke(newJoke)
+        if (likeBtn.isChecked){
+            repository.likeJoke(joke)
+            joke.isLiked = true
+            adapterChange(joke)
+        } else {
+            repository.dislikeJoke(joke)
+            joke.isLiked = false
+            adapterChange(joke)
+        }
+    }
+
+    fun adapterChange(joke: Joke){
+        adapter.notifyItemChanged(adapter.currentList.indexOf(joke))
+    }
+
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var progressBar: ProgressBar
     private var isLoading = false

@@ -29,7 +29,15 @@ class LikeListFragment : Fragment() {
     private val likeListViewModel: LikeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var clipboard: ClipboardManager
-    private var adapter: JokeAdapter = JokeAdapter()
+    private var adapter: JokeAdapter = JokeAdapter(){ joke, likebtn ->
+        joke.isLiked = true
+        repository.likeJoke(joke)
+        if (likebtn.isChecked){
+            repository.likeJoke(joke)
+        } else {
+            repository.dislikeJoke(joke)
+        }
+    }
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
     val repository = JokeRepository.get()

@@ -3,6 +3,7 @@ package com.example.aneckdoter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ToggleButton
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -11,7 +12,7 @@ import com.example.aneckdoter.model.Joke
 private const val VIEW_TYPE_ITEM = 0
 private const val VIEW_TYPE_LOAD = 1
 
-class JokeAdapter() :
+class JokeAdapter(private val onItemClicked: (Joke, ToggleButton) -> Unit) :
     ListAdapter<Joke, ViewHolder>(JokeDiffCallback()) {
 
     private class LoadHolder(view: View) : ViewHolder(view)
@@ -21,7 +22,9 @@ class JokeAdapter() :
             val view =
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.joke_list_item, parent, false)
-            JokeHolder(view)
+            JokeHolder(view){
+                onItemClicked(currentList[it], view.findViewById(R.id.like_button))
+            }
         } else {
             val view =
                 LayoutInflater.from(parent.context)
