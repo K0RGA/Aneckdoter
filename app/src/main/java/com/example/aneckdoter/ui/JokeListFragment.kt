@@ -1,7 +1,6 @@
 package com.example.aneckdoter.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +23,11 @@ class JokeListFragment : Fragment() {
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private val repository = JokeRepository.get()
-    private var adapter: JokeAdapter = JokeAdapter(){ joke, likeBtn ->
+
+    private var adapter: JokeAdapter = JokeAdapter() { joke, likeBtn ->
         val newJoke = Joke(joke.text, joke.number, isLiked = true)
         repository.likeJoke(newJoke)
-        if (likeBtn.isChecked){
+        if (likeBtn.isChecked) {
             repository.likeJoke(joke)
             joke.isLiked = true
             adapterChange(joke)
@@ -38,7 +38,7 @@ class JokeListFragment : Fragment() {
         }
     }
 
-    fun adapterChange(joke: Joke){
+    fun adapterChange(joke: Joke) {
         adapter.notifyItemChanged(adapter.currentList.indexOf(joke))
     }
 
@@ -81,6 +81,20 @@ class JokeListFragment : Fragment() {
                 adapter.addLoadingView()
             } else {
                 adapter.deleteLoadingView()
+            }
+        }
+
+        jokeListViewModel.jokesFromDBLiveData.observe(
+            viewLifecycleOwner
+        ) { list ->
+            if (list.isNotEmpty() && adapter.currentList.isNotEmpty()){
+                adapter.currentList.forEach{
+                    if (it != null) it.isLiked = it in list
+                }
+            } else {
+                adapter.currentList.forEach{
+                    if (it != null) it.isLiked = false
+                }
             }
         }
     }
