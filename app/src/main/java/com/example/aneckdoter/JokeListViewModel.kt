@@ -1,5 +1,6 @@
 package com.example.aneckdoter
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,10 +31,11 @@ class JokeListViewModel : ViewModel() {
         MainScope().launch {
             _isLoadingLiveData.value = true
             val listOfRandomNumber = List(BUFFER_SIZE){(0..1142).random()}
-            val likeListLiveData = repository.getListLikeJoke().await()
             for (randomNumber in listOfRandomNumber){
                 val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
-                if (newJoke.number in likeListLiveData) newJoke.isLiked = true
+                val jokeFromBD = repository.isJokeInDB(newJoke.number).await()?: Joke("",0)
+                if (newJoke.number == jokeFromBD.number) newJoke.isLiked = true
+                Log.d(TAG, jokeFromBD.toString())
                 currentJokeList.add(newJoke)
             }
             _isLoadingLiveData.value = false

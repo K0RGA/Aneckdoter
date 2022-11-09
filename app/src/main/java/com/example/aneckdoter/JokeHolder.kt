@@ -5,9 +5,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
@@ -24,19 +26,13 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
     private var clipboard: ClipboardManager =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    private var listOfLike = mutableListOf<Int>()
-
-
     private val jokeText: TextView = view.findViewById(R.id.joke_text)
     private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
-    private val likeButton: ImageButton = view.findViewById(R.id.like_button)
+    private val likeButton: ToggleButton = view.findViewById(R.id.like_button)
 
     init {
         jokeText.setOnLongClickListener(this)
         likeButton.setOnClickListener(this)
-        MainScope().launch {
-            listOfLike = repository.getListLikeJoke().await()
-        }
     }
 
     private lateinit var joke: Joke
@@ -45,8 +41,7 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
         this.joke = joke
         jokeText.text = joke.text
         jokeNumber.text = joke.number.toString()
-        joke.isLiked = joke.number in listOfLike
-        //if (joke.isLiked) likeButton.setBackgroundColor(Color.BLUE)
+        likeButton.isChecked = joke.isLiked
     }
 
     override fun onLongClick(p0: View?): Boolean {
@@ -59,6 +54,11 @@ class JokeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListen
     override fun onClick(p0: View?) {
         val text = jokeText.text.toString()
         val number = jokeNumber.text.toString().toInt()
-        repository.likeJoke(Joke(text, number, isLiked = true))
+        val joke = Joke(text, number, isLiked = true)
+        if (likeButton.isChecked){
+            repository.likeJoke(joke)
+        } else {
+            repository.dislikeJoke(joke)
+        }
     }
 }

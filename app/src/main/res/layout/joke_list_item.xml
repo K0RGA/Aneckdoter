@@ -20,11 +20,14 @@
         android:text="default joke"
         android:textSize="16sp" />
 
-    <ImageButton
+    <ToggleButton
         android:id="@+id/like_button"
-        android:layout_width="57dp"
-        android:layout_height="47dp"
+        android:layout_width="50dp"
+        android:layout_height="44dp"
         android:layout_gravity="end"
         android:background="@android:color/transparent"
-        android:src="@drawable/like_button" />
+        android:checked="false"
+        android:drawableBottom="@drawable/like_button"
+        android:textOn=""
+        android:textOff=""/>
 </LinearLayout>
