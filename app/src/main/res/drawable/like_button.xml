@@ -4,6 +4,6 @@
         android:drawable="@drawable/like"
         android:state_checked="true" />
     <item
-        android:drawable="@drawable/non_like"
+        android:drawable="@drawable/not_like"
         android:state_checked="false"/>
 </selector>

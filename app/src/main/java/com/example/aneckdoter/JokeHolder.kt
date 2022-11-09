@@ -27,7 +27,6 @@ class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHo
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     private val jokeText: TextView = view.findViewById(R.id.joke_text)
-    private val jokeNumber: TextView = view.findViewById(R.id.joke_number)
     private val likeButton: ToggleButton = view.findViewById(R.id.like_button)
 
     init {
@@ -42,7 +41,6 @@ class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHo
     fun bind(joke: Joke) {
         this.joke = joke
         jokeText.text = joke.text
-        jokeNumber.text = joke.number.toString()
         likeButton.isChecked = joke.isLiked
     }
 
@@ -52,15 +50,4 @@ class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHo
         Toast.makeText(context, "Text copied", Toast.LENGTH_SHORT).show()
         return true
     }
-
-//    override fun onClick(p0: View?) {
-//        val text = jokeText.text.toString()
-//        val number = jokeNumber.text.toString().toInt()
-//        val joke = Joke(text, number, isLiked = true)
-//        if (likeButton.isChecked){
-//            repository.likeJoke(joke)
-//        } else {
-//            repository.dislikeJoke(joke)
-//        }
-//    }
 }
