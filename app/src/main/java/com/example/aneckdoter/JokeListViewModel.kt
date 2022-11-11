@@ -1,14 +1,15 @@
 package com.example.aneckdoter
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.room.util.UUIDUtil
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 import com.example.aneckdoter.network.JokeFetcher
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 private const val TAG = "JokeListViewModel"
 
@@ -31,7 +32,7 @@ class JokeListViewModel : ViewModel() {
     fun addNewJokes(){
         MainScope().launch {
             _isLoadingLiveData.value = true
-            val listOfRandomNumber = List(BUFFER_SIZE){(0..1142).random()}
+            val listOfRandomNumber = List(BUFFER_SIZE){randomNumber()}
             for (randomNumber in listOfRandomNumber){
                 val newJoke = JokeFetcher().fetchJokeByNumber(randomNumber).await()
                 currentJokeList.add(newJoke)
@@ -39,6 +40,10 @@ class JokeListViewModel : ViewModel() {
             _isLoadingLiveData.value = false
             _jokeLiveData.value = currentJokeList
         }
+    }
+
+    fun randomNumber(): Int{
+        return (Math.random() * 1142).toInt()
     }
 
     companion object {
