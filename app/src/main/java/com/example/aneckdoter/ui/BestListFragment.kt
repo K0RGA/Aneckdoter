@@ -1,6 +1,7 @@
 package com.example.aneckdoter.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,24 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aneckdoter.viewmodel.BestListViewModel
 import com.example.aneckdoter.JokeAdapter
-import com.example.aneckdoter.viewmodel.JokeListViewModel
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 
-private const val TAG = "JokeList"
+private const val TAG = "BestListFragment"
 private const val LOAD_THRESHOLD = 3
 
-class JokeListFragment : Fragment() {
-
-    private val jokeListViewModel: JokeListViewModel by viewModels()
+class BestListFragment : Fragment() {
+    private val bestListViewModel: BestListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private val repository = JokeRepository.get()
-    private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
 
-    private var adapter: JokeAdapter = JokeAdapter() { joke, likeBtn ->
+    private var adapter: JokeAdapter = JokeAdapter { joke, likeBtn ->
         val newJoke = Joke(joke.text, joke.number, isLiked = true)
         repository.likeJoke(newJoke)
         if (likeBtn.isChecked) {
@@ -43,18 +42,20 @@ class JokeListFragment : Fragment() {
         adapter.notifyItemChanged(adapter.currentList.indexOf(joke))
     }
 
+    private lateinit var layoutManager: LinearLayoutManager
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_joke_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_best_list, container, false)
         createRecyclerView(view)
         return view
     }
 
     private fun createRecyclerView(view: View) {
-        recyclerView = view.findViewById(R.id.joke_recycler_view)
+        recyclerView = view.findViewById(R.id.best_joke_recycler_view)
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
@@ -63,13 +64,18 @@ class JokeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        jokeListViewModel.jokeLiveData.observe(
+        createListeners()
+    }
+
+    private fun createListeners() {
+        bestListViewModel.jokeLiveData.observe(
             viewLifecycleOwner
         ) { jokes ->
             adapter.submitList(ArrayList(jokes))
+            Log.d(TAG, jokes.size.toString())
         }
 
-        jokeListViewModel.isLoadingLiveData.observe(
+        bestListViewModel.isLoadingLiveData.observe(
             viewLifecycleOwner
         ) { isLoading ->
             this.isLoading = isLoading
@@ -80,15 +86,15 @@ class JokeListFragment : Fragment() {
             }
         }
 
-        jokeListViewModel.jokesFromDBLiveData.observe(
+        bestListViewModel.jokesFromDBLiveData.observe(
             viewLifecycleOwner
         ) { list ->
-            if (list.isNotEmpty() && adapter.currentList.isNotEmpty()){
-                adapter.currentList.forEach{
+            if (list.isNotEmpty() && adapter.currentList.isNotEmpty()) {
+                adapter.currentList.forEach {
                     if (it != null) it.isLiked = it in list
                 }
             } else {
-                adapter.currentList.forEach{
+                adapter.currentList.forEach {
                     if (it != null) it.isLiked = false
                 }
             }
@@ -104,7 +110,7 @@ class JokeListFragment : Fragment() {
                     if (layoutManager.findLastVisibleItemPosition() ==
                         adapter.currentList.size - LOAD_THRESHOLD
                     ) {
-                        jokeListViewModel.addNewJokes()
+                        bestListViewModel.getBestJokeList()
                     }
                 }
             }
@@ -112,17 +118,16 @@ class JokeListFragment : Fragment() {
     }
 
     companion object {
-        private var INSTANCE: JokeListFragment? = null
+        private var INSTANCE: BestListFragment? = null
 
         fun initialize() {
             if (INSTANCE == null) {
-                INSTANCE = JokeListFragment()
+                INSTANCE = BestListFragment()
             }
         }
 
-        fun get(): JokeListFragment {
+        fun get(): BestListFragment {
             return INSTANCE ?: throw IllegalStateException("JokeRepository must be initialized")
         }
     }
-
 }

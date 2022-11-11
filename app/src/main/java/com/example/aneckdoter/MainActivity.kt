@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
+import com.example.aneckdoter.ui.BestListFragment
 import com.example.aneckdoter.ui.JokeListFragment
 import com.example.aneckdoter.ui.LikeListFragment
 import com.mikepenz.iconics.typeface.FontAwesome
@@ -33,7 +34,8 @@ class MainActivity : AppCompatActivity() {
                 PrimaryDrawerItem().withName(R.string.drawer_item_random_joke)
                     .withIcon(FontAwesome.Icon.faw_random),
                 PrimaryDrawerItem().withName(R.string.drawer_item_like)
-                    .withIcon(FontAwesome.Icon.faw_heart_o)
+                    .withIcon(FontAwesome.Icon.faw_heart_o),
+                PrimaryDrawerItem().withName("Лучшие анекдоты")
             )
             .withOnDrawerItemClickListener { _, _, position, _, _ ->
                 when (position) {
@@ -46,6 +48,11 @@ class MainActivity : AppCompatActivity() {
                         setReorderingAllowed(true)
                         replace(fragmentContainer, LikeListFragment.newInstance())
                         addToBackStack("like_list")
+                    }
+                    3 -> supportFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace(fragmentContainer, BestListFragment.get())
+                        addToBackStack("best_list")
                     }
                 }
             }

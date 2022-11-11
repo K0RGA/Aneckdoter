@@ -1,4 +1,4 @@
-package com.example.aneckdoter
+package com.example.aneckdoter.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
