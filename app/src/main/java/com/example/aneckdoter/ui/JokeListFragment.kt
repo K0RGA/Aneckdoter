@@ -96,6 +96,7 @@ class JokeListFragment : Fragment() {
                     if (it != null) it.isLiked = false
                 }
             }
+            adapter.notifyDataSetChanged()
         }
     }
 

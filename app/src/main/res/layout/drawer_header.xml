@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:adjustViewBounds="true"
-    android:background="@color/design_default_color_primary"
+    android:background="#fe5f55"
     android:orientation="vertical"
-    android:scaleType="fitCenter"></ImageView>
+    android:scaleType="fitCenter"
+    android:src="@drawable/baneks_new"></ImageView>

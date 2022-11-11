@@ -37,17 +37,6 @@ class JokeRepository private constructor(context: Context) {
         }
     }
 
-    fun isJokeInDB(id: Int): Deferred<Joke> {
-        return CoroutineScope(Dispatchers.IO).async {
-            try {
-                val list = jokeDao.isJokeInDB(id)
-                list
-            } catch (e: Exception) {
-                Joke("",0)
-            }
-        }
-    }
-
     companion object {
         private var INSTANCE: JokeRepository? = null
 
