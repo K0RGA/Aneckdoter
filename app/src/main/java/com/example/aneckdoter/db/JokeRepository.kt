@@ -50,6 +50,4 @@ class JokeRepository private constructor(context: Context) {
             return INSTANCE ?: throw IllegalStateException("JokeRepository must be initialized")
         }
     }
-
-
 }

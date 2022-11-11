@@ -1,13 +1,9 @@
 package com.example.aneckdoter
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import com.example.aneckdoter.ui.BestListFragment
 import com.example.aneckdoter.ui.JokeListFragment
@@ -21,43 +17,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        val fragmentContainer = R.id.fragmentContainer
-        Drawer()
-            .withActivity(this)
-            .withToolbar(toolbar)
-            .withActionBarDrawerToggle(true)
-            .withHeader(R.layout.drawer_header)
-            .addDrawerItems(
-                PrimaryDrawerItem().withName(R.string.drawer_item_random_joke)
-                    .withIcon(FontAwesome.Icon.faw_random),
-                PrimaryDrawerItem().withName(R.string.drawer_item_like)
-                    .withIcon(FontAwesome.Icon.faw_heart_o),
-                PrimaryDrawerItem().withName("Лучшие анекдоты")
-            )
-            .withOnDrawerItemClickListener { _, _, position, _, _ ->
-                when (position) {
-                    1 -> supportFragmentManager.commit {
-                        setReorderingAllowed(true)
-                        replace(fragmentContainer, JokeListFragment.get())
-                        addToBackStack("joke_list")
-                    }
-                    2 -> supportFragmentManager.commit {
-                        setReorderingAllowed(true)
-                        replace(fragmentContainer, LikeListFragment.newInstance())
-                        addToBackStack("like_list")
-                    }
-                    3 -> supportFragmentManager.commit {
-                        setReorderingAllowed(true)
-                        replace(fragmentContainer, BestListFragment.get())
-                        addToBackStack("best_list")
-                    }
-                }
-            }
-            .build()
+        val (toolbar: Toolbar, fragmentContainer) = createToolbar()
+        createDrawer(toolbar, fragmentContainer)
+        initialize(savedInstanceState, fragmentContainer)
+    }
 
+    private fun initialize(savedInstanceState: Bundle?, fragmentContainer: Int) {
         val isFragmentContainerEmpty = (savedInstanceState == null)
         if (isFragmentContainerEmpty) {
             supportFragmentManager.commit {
@@ -68,5 +33,57 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun createToolbar(): Pair<Toolbar, Int> {
+        val toolbar: Toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        toolbar.setTitle(R.string.drawer_item_random_joke)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        val fragmentContainer = R.id.fragmentContainer
+        return Pair(toolbar, fragmentContainer)
+    }
 
+    private fun createDrawer(toolbar: Toolbar, fragmentContainer: Int) {
+        Drawer()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .withActionBarDrawerToggle(true)
+            .withHeader(R.layout.drawer_header)
+            .addDrawerItems(
+                PrimaryDrawerItem().withName(R.string.drawer_item_random_joke)
+                    .withIcon(getDrawable(R.drawable.random)),
+                PrimaryDrawerItem().withName(R.string.drawer_item_like)
+                    .withIcon(getDrawable(R.drawable.heart)),
+                PrimaryDrawerItem().withName(R.string.drawer_item_best_joke)
+                    .withIcon(getDrawable(R.drawable.crown))
+            )
+            .withOnDrawerItemClickListener { _, _, position, _, _ ->
+                when (position) {
+                    1 -> {
+                        supportFragmentManager.commit {
+                            setReorderingAllowed(true)
+                            replace(fragmentContainer, JokeListFragment.get())
+                            addToBackStack("joke_list")
+                            toolbar.setTitle(R.string.drawer_item_random_joke)
+                        }
+                    }
+                    2 -> {
+                        supportFragmentManager.commit {
+                            setReorderingAllowed(true)
+                            replace(fragmentContainer, LikeListFragment.newInstance())
+                            addToBackStack("like_list")
+                        }
+                        toolbar.setTitle(R.string.drawer_item_like)
+                    }
+                    3 -> {
+                        supportFragmentManager.commit {
+                            setReorderingAllowed(true)
+                            replace(fragmentContainer, BestListFragment.get())
+                            addToBackStack("best_list")
+                        }
+                        toolbar.setTitle(R.string.drawer_item_best_joke)
+                    }
+                }
+            }
+            .build()
+    }
 }

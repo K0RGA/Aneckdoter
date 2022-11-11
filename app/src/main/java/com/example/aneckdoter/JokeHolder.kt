@@ -20,14 +20,12 @@ class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHo
     View.OnLongClickListener {
 
     val context = view.context
-
     private val repository = JokeRepository.get()
-
     private var clipboard: ClipboardManager =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
     private val jokeText: TextView = view.findViewById(R.id.joke_text)
     private val likeButton: ToggleButton = view.findViewById(R.id.like_button)
+    private lateinit var joke: Joke
 
     init {
         jokeText.setOnLongClickListener(this)
@@ -35,8 +33,6 @@ class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHo
             onItemClicked(bindingAdapterPosition)
         }
     }
-
-    private lateinit var joke: Joke
 
     fun bind(joke: Joke) {
         this.joke = joke
