@@ -16,9 +16,12 @@ import com.example.aneckdoter.JokeAdapter
 import com.example.aneckdoter.viewmodel.LikeListViewModel
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val TAG = "Current fragment"
 
+@AndroidEntryPoint
 class LikeListFragment : Fragment() {
     private val likeListViewModel: LikeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
@@ -34,7 +37,8 @@ class LikeListFragment : Fragment() {
     }
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
-    val repository = JokeRepository.get()
+    @Inject
+    lateinit var repository: JokeRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,28 +1,19 @@
 package com.example.aneckdoter.network
 
 import android.util.Log
-import androidx.core.text.isDigitsOnly
 import com.example.aneckdoter.model.Joke
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import org.jsoup.Jsoup
-import retrofit2.*
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.concurrent.Executors
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "JokeFetcher"
 
-class JokeFetcher {
-    private val jokeApi: JokeApi
-    private val executor = Executors.newSingleThreadExecutor()
-
-    init {
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl("https://baneks.ru/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-        jokeApi = retrofit.create(JokeApi::class.java)
-    }
-
+@Singleton
+class JokeFetcher @Inject constructor(private val jokeApi: JokeApi) {
     suspend fun fetchJokeByNumberAsync(numberOfJoke: Int): Deferred<Joke> {
         return CoroutineScope(Dispatchers.IO).async {
             try {

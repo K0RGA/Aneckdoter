@@ -6,12 +6,18 @@ import androidx.lifecycle.ViewModel
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 import com.example.aneckdoter.network.JokeFetcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val TAG = "JokeListViewModel"
 
-class JokeListViewModel : ViewModel() {
+@HiltViewModel
+class JokeListViewModel @Inject constructor(
+    private val repository: JokeRepository,
+    private val jokeFetcher: JokeFetcher
+) : ViewModel() {
     private val _jokeLiveData: MutableLiveData<MutableList<Joke>> = MutableLiveData()
     val jokeLiveData: LiveData<MutableList<Joke>> = _jokeLiveData
 
@@ -20,19 +26,18 @@ class JokeListViewModel : ViewModel() {
 
     var currentJokeList = mutableListOf<Joke>()
 
-    private val repository: JokeRepository = JokeRepository.get()
     val jokesFromDBLiveData: LiveData<List<Joke>> = repository.getLikeJokes()
 
     init {
         addNewJokes()
     }
 
-    fun addNewJokes(){
+    fun addNewJokes() {
         MainScope().launch {
             _isLoadingLiveData.value = true
-            val listOfRandomNumber = List(BUFFER_SIZE){randomNumber()}
-            for (randomNumber in listOfRandomNumber){
-                val newJoke = JokeFetcher().fetchJokeByNumberAsync(randomNumber).await()
+            val listOfRandomNumber = List(BUFFER_SIZE) { randomNumber() }
+            for (randomNumber in listOfRandomNumber) {
+                val newJoke = jokeFetcher.fetchJokeByNumberAsync(randomNumber).await()
                 currentJokeList.add(newJoke)
             }
             _isLoadingLiveData.value = false
@@ -40,7 +45,7 @@ class JokeListViewModel : ViewModel() {
         }
     }
 
-    fun randomNumber(): Int{
+    fun randomNumber(): Int {
         return (Math.random() * 1142).toInt()
     }
 

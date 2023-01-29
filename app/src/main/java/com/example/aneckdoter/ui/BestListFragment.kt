@@ -9,19 +9,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aneckdoter.viewmodel.BestListViewModel
 import com.example.aneckdoter.JokeAdapter
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
+import com.example.aneckdoter.viewmodel.BestListViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val TAG = "BestListFragment"
 private const val LOAD_THRESHOLD = 3
 
+@AndroidEntryPoint
 class BestListFragment : Fragment() {
     private val bestListViewModel: BestListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
-    private val repository = JokeRepository.get()
+    @Inject
+    lateinit var repository: JokeRepository
     private var isLoading = false
 
     private var adapter: JokeAdapter = JokeAdapter { joke, likeBtn ->
