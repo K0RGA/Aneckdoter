@@ -13,17 +13,21 @@ import com.example.aneckdoter.viewmodel.JokeListViewModel
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val TAG = "JokeList"
 private const val LOAD_THRESHOLD = 3
 
+@AndroidEntryPoint
 class JokeListFragment : Fragment() {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
-    private val repository = JokeRepository.get()
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
+    @Inject
+    lateinit var repository: JokeRepository
 
     private var adapter: JokeAdapter = JokeAdapter() { joke, likeBtn ->
         val newJoke = Joke(joke.text, joke.number, isLiked = true)
@@ -83,12 +87,12 @@ class JokeListFragment : Fragment() {
         jokeListViewModel.jokesFromDBLiveData.observe(
             viewLifecycleOwner
         ) { list ->
-            if (list.isNotEmpty() && adapter.currentList.isNotEmpty()){
-                adapter.currentList.forEach{
+            if (list.isNotEmpty() && adapter.currentList.isNotEmpty()) {
+                adapter.currentList.forEach {
                     if (it != null) it.isLiked = it in list
                 }
             } else {
-                adapter.currentList.forEach{
+                adapter.currentList.forEach {
                     if (it != null) it.isLiked = false
                 }
             }

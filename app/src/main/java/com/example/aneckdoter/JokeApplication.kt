@@ -4,11 +4,12 @@ import android.app.Application
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.ui.BestListFragment
 import com.example.aneckdoter.ui.JokeListFragment
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class JokeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        JokeRepository.initialize(this)
         JokeListFragment.initialize()
         BestListFragment.initialize()
     }

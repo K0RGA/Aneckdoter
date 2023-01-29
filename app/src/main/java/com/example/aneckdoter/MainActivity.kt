@@ -11,8 +11,9 @@ import com.example.aneckdoter.ui.LikeListFragment
 import com.mikepenz.iconics.typeface.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

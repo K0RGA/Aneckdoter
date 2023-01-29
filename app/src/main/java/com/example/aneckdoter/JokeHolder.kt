@@ -15,12 +15,14 @@ import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class JokeHolder(view: View, onItemClicked: (Int) -> Unit) : RecyclerView.ViewHolder(view),
     View.OnLongClickListener {
 
     val context = view.context
-    private val repository = JokeRepository.get()
+    @Inject
+    lateinit var repository: JokeRepository
     private var clipboard: ClipboardManager =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     private val jokeText: TextView = view.findViewById(R.id.joke_text)

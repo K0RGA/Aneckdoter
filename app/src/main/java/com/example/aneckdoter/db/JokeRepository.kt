@@ -4,15 +4,18 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.aneckdoter.model.Joke
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.concurrent.Executors
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val DATABASE_NAME = "joke-database"
-
-class JokeRepository private constructor(context: Context) {
+@Singleton
+class JokeRepository @Inject constructor(@ApplicationContext context: Context) {
 
     private val database: JokeDatabase = Room.databaseBuilder(
         context.applicationContext,
@@ -34,20 +37,6 @@ class JokeRepository private constructor(context: Context) {
     fun dislikeJoke(joke: Joke) {
         executor.execute {
             jokeDao.dislikeJoke(joke)
-        }
-    }
-
-    companion object {
-        private var INSTANCE: JokeRepository? = null
-
-        fun initialize(context: Context) {
-            if (INSTANCE == null) {
-                INSTANCE = JokeRepository(context)
-            }
-        }
-
-        fun get(): JokeRepository {
-            return INSTANCE ?: throw IllegalStateException("JokeRepository must be initialized")
         }
     }
 }
