@@ -9,23 +9,26 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aneckdoter.JokeAdapter
-import com.example.aneckdoter.viewmodel.JokeListViewModel
 import com.example.aneckdoter.R
 import com.example.aneckdoter.db.JokeRepository
 import com.example.aneckdoter.model.Joke
+import com.example.aneckdoter.viewmodel.JokeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "JokeList"
 private const val LOAD_THRESHOLD = 3
 
 @AndroidEntryPoint
+@Singleton
 class JokeListFragment : Fragment() {
 
     private val jokeListViewModel: JokeListViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private var isLoading = false
+
     @Inject
     lateinit var repository: JokeRepository
 
@@ -117,7 +120,6 @@ class JokeListFragment : Fragment() {
 
     companion object {
         private var INSTANCE: JokeListFragment? = null
-
         fun initialize() {
             if (INSTANCE == null) {
                 INSTANCE = JokeListFragment()
