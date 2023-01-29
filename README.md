@@ -19,5 +19,5 @@ https://baneks.ru/
 * **Jsoup** для извлечения данных из HTML
 * **Room** для хранения понравившихся анекдотов
 * [**MaterialDrawer by Mike Penz**](https://github.com/mikepenz/MaterialDrawer) для создания бокового меню
-**Hilt** для внедрения зависимостей 
+* **Hilt** для внедрения зависимостей 
 
